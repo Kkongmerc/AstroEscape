@@ -56,8 +56,8 @@
 // yipee 2
     function preload()
     {
-        this.load.image('sky', 'assets/clouds.png');
-        this.load.image('platform', 'assets/platform.png');
+        this.load.image('sky', 'assets/temporary/red.png');
+        this.load.image('platform', 'assets/temporary/blue.png');
         this.load.image('alien', 'assets/enemies/alien.png');
         this.load.image('alien_ninja', 'assets/enemies/ninja.png');
         this.load.audio('menumusic', 'assets/sounds/gamemusic.mp3')
@@ -90,12 +90,11 @@
         //basePlatform is the floor of the game
         let basePlatform = platforms.create(game.scale.width/2, game.scale.height-30, 'platform');
         basePlatform.setScale(100, 1).refreshBody(); //scales the base platform in the x axis to cover the entire floor
-
-        platforms.create(250, 0, 'platform');
     }
 
     function update()
     {
+        this.cameras.main.startFollow(player);
         //Player will not move in the x-axis unless a movement key is being pressed
         player.setVelocityX(0);
 
