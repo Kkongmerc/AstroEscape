@@ -28,6 +28,20 @@
 
     };
 
+    class NonPlaya extends Phaser.Physics.Arcade.Sprite
+    {
+        totalJumps = 2;
+        currentJumps = 0;
+        constructor(scene, x, y)
+        {
+            super(scene, x, y, 'alien');
+            scene.add.existing(this);
+            scene.physics.add.existing(this);
+            this.setScale(2);
+            this.setCollideWorldBounds(true);
+            this.setGravityY(3000); //We will set gravity *per object* rather than for the scene!
+        }};
+
     class Player extends Phaser.Physics.Arcade.Sprite
     {
         totalJumps = 2;
@@ -59,7 +73,8 @@
         this.load.image('sky', 'assets/temporary/red.png');
         this.load.image('platform', 'assets/temporary/blue.png');
         this.load.image('alien', 'assets/enemies/alien.png');
-        this.load.image('alien_ninja', 'assets/enemies/ninja.png');
+        this.load.image('ninja', 'assets/enemies/ninja.png');
+        this.load.image('bullet', 'assets/enemies/bulleta.png');
         this.load.audio('menumusic', 'assets/sounds/gamemusic.mp3')
         this.load.image('bulleta', 'assets/enemies/bulleta.png');
 
@@ -74,6 +89,14 @@
        createPlatforms(this);
        player = new Player(this, 400, 40);
        this.physics.add.collider(player, platforms);
+       function Robot(game, x, y) {
+        
+        alien = new NonPlaya(this, 400, 40);
+        this.physics.add.collider(alien, platforms);
+       function Robot(game, x, y) {
+       }};
+
+
 
 
        //Set up user input
