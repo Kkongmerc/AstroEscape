@@ -11,155 +11,160 @@
 <body>
 
     <script>
-// WWW
-    var config = {
-        type: Phaser.AUTO,
-        width: 1200,
-        height: 700,
-        physics: {
-            default: 'arcade',
-        },
+        // WWW
+        var config = {
+            type: Phaser.AUTO,
+            width: 1200,
+            height: 700,
+            pixelArt: true,
+            physics: {
+                default: 'arcade',
+            },
 
-        scene: {
-            preload: preload,
-            create: create,
-            update: update,
+            scene: {
+                preload: preload,
+                create: create,
+                update: update,
+            }
+
+        };
+
+        class NonPlaya extends Phaser.Physics.Arcade.Sprite {
+            totalJumps = 2;
+            currentJumps = 0;
+            constructor(scene, x, y) {
+                super(scene, x, y, 'alien');
+                scene.add.existing(this);
+                scene.physics.add.existing(this);
+                this.setScale(2);
+                this.setCollideWorldBounds(true);
+                this.setGravityY(3000); //We will set gravity *per object* rather than for the scene!
+            }
+        };
+
+        class Crystal extends Phaser.Physics.Arcade.Sprite {
+            constructor(scene, x, y) {
+                super(scene, x, y, 'crystal');
+                scene.add.existing(this);
+                scene.physics.add.existing(this);
+                this.setScale(5);
+            }
         }
 
-    };
-
-    class NonPlaya extends Phaser.Physics.Arcade.Sprite
-    {
-        totalJumps = 2;
-        currentJumps = 0;
-        constructor(scene, x, y)
-        {
-            super(scene, x, y, 'alien');
-            scene.add.existing(this);
-            scene.physics.add.existing(this);
-            this.setScale(2);
-            this.setCollideWorldBounds(true);
-            this.setGravityY(3000); //We will set gravity *per object* rather than for the scene!
-        }};
-
-    class Player extends Phaser.Physics.Arcade.Sprite
-    {
-        totalJumps = 2;
-        currentJumps = 0;
-        constructor(scene, x, y)
-        {
-            super(scene, x, y, 'player');
-            scene.add.existing(this);
-            scene.physics.add.existing(this);
-            this.setScale(2);
-            this.setCollideWorldBounds(true);
-            this.setGravityY(3000); //We will set gravity *per object* rather than for the scene!
-        }
-    }
-
-    var game = new Phaser.Game(config);
-
-
-    //Keyboard controls
-    var cursors;
-    var keys;
-    var space;
-
-    var gui;
-    var guiTimer;
-// yipee 3
-    function preload()
-    {
-        this.load.image('sky', 'assets/temporary/red.png');
-        this.load.image('platform', 'assets/temporary/blue.png');
-        this.load.image('alien', 'assets/enemies/alien.png');
-        this.load.image('ninja', 'assets/enemies/ninja.png');
-        this.load.image('bullet', 'assets/enemies/bulleta.png');
-        this.load.audio('menumusic', 'assets/sounds/gamemusic.mp3')
-        this.load.image('bulleta', 'assets/enemies/bulleta.png');
-
-    }
-
-    function create()
-    {
-        //Set the background origin to be at (0, 0) or top left corner of the image rather than the center of the image asset
-       let background = this.add.tileSprite(0, 0, game.scale.width, game.scale.height, 'sky').setOrigin(0, 0);
-
-       //Create the platforms and the player character set to collide with the platforms
-       createPlatforms(this);
-       player = new Player(this, 400, 40);
-       this.physics.add.collider(player, platforms);
-       function Robot(game, x, y) {
-        
-        alien = new NonPlaya(this, 400, 40);
-        this.physics.add.collider(alien, platforms);
-       function Robot(game, x, y) {
-       }};
-
-
-
-
-       //Set up user input
-       cursors = this.input.keyboard.createCursorKeys();
-       keys = this.input.keyboard.addKeys('A, D');
-       space = this.input.keyboard.addKey('W');
-       space.on('down', jump); //calls jump function when space is pressed
-    }
-
-    function createPlatforms(scene)
-    {
-        platforms = scene.physics.add.staticGroup();
-
-        //basePlatform is the floor of the game
-        let basePlatform = platforms.create(game.scale.width/2, game.scale.height-30, 'platform');
-        basePlatform.setScale(100, 1).refreshBody(); //scales the base platform in the x axis to cover the entire floor
-    }
-
-    function update()
-    {
-        this.cameras.main.startFollow(player);
-        //Player will not move in the x-axis unless a movement key is being pressed
-        player.setVelocityX(0);
-
-        //Player has "drag" on the x-axis meaning they slide a bit after an input
-        player.setDragX(1000);
-
-        //This will reset the number of jumps available to the player whenever the player lands
-        if (player.body.touching.down) {
-            player.currentJumps = 0;
-        }
-// i do not like github
-        //Handle player movements
-        if (cursors.left.isDown || keys.A.isDown)
-        {
-            player.setVelocityX(-400);
+        class Player extends Phaser.Physics.Arcade.Sprite {
+            totalJumps = 2;
+            currentJumps = 0;
+            constructor(scene, x, y) {
+                super(scene, x, y, 'player');
+                scene.add.existing(this);
+                scene.physics.add.existing(this);
+                this.setScale(2);
+                this.setCollideWorldBounds(true);
+                this.setGravityY(3000); //We will set gravity *per object* rather than for the scene!
+            }
         }
 
-        if (cursors.right.isDown || keys.D.isDown)
-        {
-            player.setVelocityX(400);
+        var game = new Phaser.Game(config);
+
+
+        //Keyboard controls
+        var cursors;
+        var keys;
+        var space;
+
+        var gui;
+        var guiTimer;
+        // yipee 3
+        function preload() {
+            this.load.image('sky', 'assets/red.png');
+            this.load.image('platform', 'assets/blue.png');
+            this.load.image('alien', 'assets/alien.png');
+            this.load.image('crystal', 'assets/crystal.png');
+            this.load.image('ninja', 'assets/ninja.png');
+            this.load.image('bullet', 'assets/bulleta.png');
+            this.load.audio('menumusic', 'assets/gamemusic.mp3')
+            this.load.image('bulleta', 'assets/bulleta.png');
+
         }
 
-    }
-//i love coding - nathan
-    function jump(event)
-    {
-        console.log(player.currentJumps)
-        
-        if (player.body.touching.down) {
-          //If the player is on the ground, the player can jump
-          player.setVelocityY(-1100);
-          player.currentJumps++;
-         }
-         
-// this following comment is to disabble double jump uncoment to enable
+        function create() {
+            //Set the background origin to be at (0, 0) or top left corner of the image rather than the center of the image asset
+            let background = this.add.tileSprite(0, 0, game.scale.width, game.scale.height, 'sky').setOrigin(0, 0);
 
-         //else if (player.currentJumps < player.totalJumps) {
-        //   //If the player is not on the ground but has an available air jump, use that jump
-        //   player.setVelocityY(-800);
-        //  player.currentJumps++;
-        // }
-    }
+            //Create the platforms and the player character set to collide with the platforms
+            createPlatforms(this);
+            player = new Player(this, 400, 40);
+            this.physics.add.collider(player, platforms);
+            function Robot(game, x, y) {
+
+
+
+                alien = new NonPlaya(this, 400, 40);
+                this.physics.add.collider(alien, platforms);
+                function Robot(game, x, y) {
+                }
+            };
+
+            var crystal = new Crystal(this, 800, 450);
+            this.physics.add.collider(crystal, platforms);
+            this.physics.add.overlap(crystal, player, function() { console.log("THAT'S A DUB") }, null, this);
+
+            //Set up user input
+            cursors = this.input.keyboard.createCursorKeys();
+            keys = this.input.keyboard.addKeys('A, D');
+            space = this.input.keyboard.addKey('W');
+            space.on('down', jump); //calls jump function when space is pressed
+        }
+
+        function createPlatforms(scene) {
+            platforms = scene.physics.add.staticGroup();
+
+            //basePlatform is the floor of the game
+            let basePlatform = platforms.create(game.scale.width / 2, game.scale.height - 30, 'platform');
+            basePlatform.setScale(100, 1).refreshBody(); //scales the base platform in the x axis to cover the entire floor
+        }
+
+        function update() {
+            this.cameras.main.startFollow(player);
+            //Player will not move in the x-axis unless a movement key is being pressed
+            player.setVelocityX(0);
+
+            //Player has "drag" on the x-axis meaning they slide a bit after an input
+            player.setDragX(1000);
+
+            //This will reset the number of jumps available to the player whenever the player lands
+            if (player.body.touching.down) {
+                player.currentJumps = 0;
+            }
+            // i do not like github
+            //Handle player movements
+            if (cursors.left.isDown || keys.A.isDown) {
+                player.setVelocityX(-400);
+            }
+
+            if (cursors.right.isDown || keys.D.isDown) {
+                player.setVelocityX(400);
+            }
+
+        }
+
+        function jump(event) {
+            console.log(player.currentJumps)
+
+            if (player.body.touching.down) {
+                //If the player is on the ground, the player can jump
+                player.setVelocityY(-1100);
+                player.currentJumps++;
+            }
+
+            // this following comment is to disabble double jump uncoment to enable
+
+            //else if (player.currentJumps < player.totalJumps) {
+            //   //If the player is not on the ground but has an available air jump, use that jump
+            //   player.setVelocityY(-800);
+            //  player.currentJumps++;
+            // }
+        }
 
 
     </script>
